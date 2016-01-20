@@ -68,7 +68,7 @@ var qArray = [
 
     {
         question: "Which way is a rock moving when you throw it straight up at its maximum height",
-        a1: "Can't say for certain",
+        a1: "9.8m/s²",
         a2: "Negative velocity",
         a3: "Positive velocity",
         correcta: "Zero velocity"
@@ -80,6 +80,14 @@ var qArray = [
         a2: "Tilt of the Earht's Axis",
         a3: "Movement of the Earth's crust",
         correcta: "The Moon"
+    },
+    
+    {
+        question: "Is this the tenth question?",
+        a1: "P...probably?",
+        a2: "Who cares?",
+        a3: "YOUR MOM IS THE TENTH QUESTION",
+        correcta: "No"
     }
 
 ];
@@ -91,7 +99,7 @@ var questionCount = 0;
 
 //A function that takes an object and places the contents of that object on an html doc
 
-var aBigFatQuestionTemplate = '<h4 id=qname style = "margin:10px"></h4><div class="form-group"><label id = "question" for="sel1"></label><div class="radio"><label id = "q1"></label></div><div class="radio"><label  id = "q2"><input type="radio" name="optradio"></label></div><div class="radio"><label id = "q3"><input type="radio" name="optradio"></label></div><div class="radio"><label id = "q4"><input type="radio" name="optradio"></label></div></div><button onclick="onSubmitClick()">Is that your final answer?</button>';
+var aBigFatQuestionTemplate = '<h4 id=qname style = "margin:10px"></h4><div class="form-group"><label id = "question" for="sel1"></label><div class="radio"><label id = "q1"></label></div><div class="radio"><label  id = "q2"><input type="radio" name="optradio"></label></div><div class="radio"><label id = "q3"><input type="radio" name="optradio"></label></div><div class="radio"><label id = "q4"><input type="radio" name="optradio"></label></div></div><button onclick="onSubmitClick()">Submit your Answer!</button>';
 
 function _ih(id, value) {
     document.getElementById(id).innerHTML = value;
@@ -129,19 +137,35 @@ function quizNums() {
 //The end of the big honkin' random array generator
 
 function onSubmitClick() {
+    
+    correctnessArray.push(grabAnswer() == qArray[zeroIsZeroDangit(questionCount)].correcta);
+    console.log(correctnessArray);
     if (questionCount == qArray.length) {
         lastPage();
     }
-    correctnessArray.push(grabAnswer() == qArray[zeroIsZeroDangit(questionCount)].correcta);
-    console.log(correctnessArray);
     quizQuestionPositioner(quizNums(), qArray[questionCount], radioConcatonator);
     questionCount++;
+    
 }
 
 function lastPage (){
-    document.getElementById("everything").innerHTML = "<h2>You got "+numberCorrect(correctnessArray)+" questions right!</h2>";  
+    document.getElementById("everything").innerHTML = "<h2>You got "+numberCorrect(correctnessArray)+" ("+parseInt(numberCorrect(correctnessArray)/(correctnessArray.length) * 100) + "%)" + " questions right!</h2>";
+    document.getElementById("exceptForThisThing").innerHTML = resultOfQuiz(correctnessArray,qArray);    
 }
 
+function resultOfQuiz (trueFalseArray, objectArray){
+    var longString ='';
+    for (var i = 0; i<trueFalseArray.length; i++){
+        var question = objectArray[i].question;
+        var answer = objectArray[i].correcta;
+        var right = '';
+        if (trueFalseArray[i]){
+         right = "<span style = 'color:blue;'>You got this question right!</span>";   
+        }else{right="<span style = 'color:red'>You got this question wrong! Leave the room!</span>";}
+        longString += question + " "+answer+"! "+right +"<br/><br/>";
+    }
+    return longString;
+}
 function numberCorrect(arr){
     var correctCount = 0;
     for(var i = 0; i < arr.length; i++){
